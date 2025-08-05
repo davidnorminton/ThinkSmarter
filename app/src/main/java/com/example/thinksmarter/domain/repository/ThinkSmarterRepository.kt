@@ -6,6 +6,7 @@ import com.example.thinksmarter.data.model.QuestionWithAnswer
 import com.example.thinksmarter.data.model.Category
 import com.example.thinksmarter.data.model.DailyChallenge
 import com.example.thinksmarter.data.model.UserStreak
+import com.example.thinksmarter.data.model.TextImprovement
 import kotlinx.coroutines.flow.Flow
 
 interface ThinkSmarterRepository {
@@ -42,6 +43,14 @@ interface ThinkSmarterRepository {
     suspend fun generateQuestion(difficulty: Int, category: String = "General", lengthPreference: String = "Auto"): Result<String>
     suspend fun evaluateAnswer(question: String, userAnswer: String, expectedLength: String): Result<AnswerEvaluation>
     suspend fun generateFollowUpQuestions(originalQuestion: String, userAnswer: String): Result<List<String>>
+    
+    // Text Improvement
+    suspend fun improveText(userText: String, textType: String): Result<AnswerEvaluation>
+    suspend fun insertTextImprovement(textImprovement: TextImprovement): Long
+    suspend fun getAllTextImprovements(): Flow<List<TextImprovement>>
+    suspend fun deleteTextImprovement(textImprovement: TextImprovement)
+    suspend fun getTextImprovementCount(): Int
+    suspend fun getAverageTextImprovementScore(): Double?
     
     // Settings operations
     suspend fun getApiKey(): String?

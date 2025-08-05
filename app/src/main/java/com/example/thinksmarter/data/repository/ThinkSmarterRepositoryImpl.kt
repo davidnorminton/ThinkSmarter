@@ -11,7 +11,6 @@ import com.example.thinksmarter.data.model.QuestionWithAnswer
 import com.example.thinksmarter.data.model.Category
 import com.example.thinksmarter.data.network.AnthropicApi
 import com.example.thinksmarter.data.network.AnthropicRequest
-import com.example.thinksmarter.data.network.Message
 import com.example.thinksmarter.data.network.NetworkService
 import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
 import com.example.thinksmarter.domain.repository.AnswerEvaluation
@@ -24,6 +23,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.thinksmarter.data.model.DailyChallenge
 import com.example.thinksmarter.data.model.UserStreak
+import com.example.thinksmarter.data.model.TextImprovement
+import com.example.thinksmarter.data.network.Message
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -175,24 +176,217 @@ class ThinkSmarterRepositoryImpl(
 
     override suspend fun generateFollowUpQuestions(originalQuestion: String, userAnswer: String): Result<List<String>> {
         return try {
-            val apiKey = getApiKey() ?: return Result.failure(Exception("API key not set"))
+            val apiKey = getApiKey() ?: return Result.failure(Exception("API key not configured"))
             
             val prompt = PromptTemplates.generateFollowUpQuestionsPrompt(originalQuestion, userAnswer)
             val request = AnthropicRequest(
-                messages = listOf(Message("user", prompt))
+                model = "claude-3-7-sonnet-latest",
+                max_tokens = 1000,
+                messages = listOf(
+                    Message(
+                        role = "user",
+                        content = prompt
+                    )
+                )
             )
             
             val response = anthropicApi.generateQuestion(apiKey, request = request)
-            val responseText = response.content.firstOrNull()?.text
-                ?: return Result.failure(Exception("Empty response from API"))
-            
-            val followUpQuestions = parseFollowUpQuestions(responseText)
-            Result.success(followUpQuestions)
+            val questions = parseFollowUpQuestions(response.content[0].text)
+            Result.success(questions)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+    
+    override suspend fun improveText(userText: String, textType: String): Result<AnswerEvaluation> {
+        println("DEBUG: Starting text improvement")
+        return try {
+            val apiKey = getApiKey() ?: return Result.failure(Exception("API key not configured"))
+            println("DEBUG: API key retrieved")
+            
+            val prompt = PromptTemplates.improveTextPrompt(userText, textType)
+            println("DEBUG: Generated prompt")
+            
+            val request = AnthropicRequest(
+                model = "claude-3-7-sonnet-latest",
+                max_tokens = 2000,
+                messages = listOf(
+                    Message(
+                        role = "user",
+                        content = prompt
+                    )
+                )
+            )
+            println("DEBUG: Created API request")
+            
+            val response = anthropicApi.generateQuestion(apiKey, request = request)
+            println("DEBUG: Received API response")
+            println("DEBUG: Raw response text: ${response.content[0].text}")
+            
+            val evaluation = parseEvaluationResponse(response.content[0].text)
+            println("DEBUG: Parsed evaluation: $evaluation")
+            println("DEBUG: Feedback length: ${evaluation.feedback.length}")
+            println("DEBUG: Word suggestions length: ${evaluation.wordAndPhraseSuggestions.length}")
+            println("DEBUG: Better answer suggestions length: ${evaluation.betterAnswerSuggestions.length}")
+            println("DEBUG: Thought process guidance length: ${evaluation.thoughtProcessGuidance.length}")
+            println("DEBUG: Model answer length: ${evaluation.modelAnswer.length}")
+            
+            Result.success(evaluation)
+        } catch (e: Exception) {
+            println("DEBUG: Error in improveText: ${e.message}")
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun insertTextImprovement(textImprovement: TextImprovement): Long {
+        return database.textImprovementDao().insertTextImprovement(textImprovement)
+    }
+    
+    override suspend fun getAllTextImprovements(): Flow<List<TextImprovement>> {
+        try {
+            return database.textImprovementDao().getAllTextImprovements()
+        } catch (e: Exception) {
+            println("DEBUG: Error getting text improvements: ${e.message}")
+            e.printStackTrace()
+            return kotlinx.coroutines.flow.flowOf(emptyList())
+        }
+    }
+    
+    override suspend fun deleteTextImprovement(textImprovement: TextImprovement) {
+        database.textImprovementDao().deleteTextImprovement(textImprovement)
+    }
+    
+    override suspend fun getTextImprovementCount(): Int {
+        return database.textImprovementDao().getTextImprovementCount()
+    }
+    
+    override suspend fun getAverageTextImprovementScore(): Double? {
+        return database.textImprovementDao().getAverageTextImprovementScore()
+    }
+    
+    private fun parseEvaluationResponse(responseText: String): AnswerEvaluation {
+        println("DEBUG: Starting response parsing")
+        println("DEBUG: Full response text:")
+        println(responseText)
+        val lines = responseText.split("\n")
+        
+        var clarityScore = 5
+        var logicScore = 5
+        var perspectiveScore = 5
+        var depthScore = 5
+        var feedback = ""
+        var wordAndPhraseSuggestions = ""
+        var betterAnswerSuggestions = ""
+        var thoughtProcessGuidance = ""
+        var modelAnswer = ""
+        
+        var currentSection = ""
+        
+        for (line in lines) {
+            val trimmedLine = line.trim()
+            println("DEBUG: Processing line: '$trimmedLine'")
+            when {
+                trimmedLine.startsWith("CLARITY SCORE:") -> {
+                    println("DEBUG: Found clarity score line: $trimmedLine")
+                    clarityScore = trimmedLine.substringAfter("CLARITY SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
+                }
+                trimmedLine.startsWith("LOGIC SCORE:") -> {
+                    println("DEBUG: Found logic score line: $trimmedLine")
+                    logicScore = trimmedLine.substringAfter("LOGIC SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
+                }
+                trimmedLine.startsWith("PERSPECTIVE SCORE:") -> {
+                    println("DEBUG: Found perspective score line: $trimmedLine")
+                    perspectiveScore = trimmedLine.substringAfter("PERSPECTIVE SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
+                }
+                trimmedLine.startsWith("DEPTH SCORE:") -> {
+                    println("DEBUG: Found depth score line: $trimmedLine")
+                    depthScore = trimmedLine.substringAfter("DEPTH SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
+                }
+                trimmedLine.startsWith("FEEDBACK:") || trimmedLine.startsWith("FEEDBACK") || trimmedLine.contains("FEEDBACK") -> {
+                    println("DEBUG: Starting feedback section")
+                    currentSection = "feedback"
+                }
+                trimmedLine.startsWith("WORD AND PHRASE SUGGESTIONS:") || trimmedLine.startsWith("WORD AND PHRASE SUGGESTIONS") || trimmedLine.startsWith("WORD & PHRASE SUGGESTIONS:") || trimmedLine.startsWith("WORD & PHRASE SUGGESTIONS") || trimmedLine.contains("WORD") && trimmedLine.contains("PHRASE") -> {
+                    println("DEBUG: Starting word and phrase suggestions section")
+                    currentSection = "wordAndPhraseSuggestions"
+                }
+                trimmedLine.startsWith("BETTER ANSWER SUGGESTIONS:") || trimmedLine.startsWith("BETTER ANSWER SUGGESTIONS") || trimmedLine.startsWith("IMPROVEMENT SUGGESTIONS:") || trimmedLine.startsWith("IMPROVEMENT SUGGESTIONS") || trimmedLine.contains("BETTER") && trimmedLine.contains("SUGGESTIONS") -> {
+                    println("DEBUG: Starting better answer suggestions section")
+                    currentSection = "betterAnswerSuggestions"
+                }
+                trimmedLine.startsWith("THOUGHT PROCESS GUIDANCE:") || trimmedLine.startsWith("THOUGHT PROCESS GUIDANCE") || trimmedLine.startsWith("WRITING PROCESS GUIDANCE:") || trimmedLine.startsWith("WRITING PROCESS GUIDANCE") || trimmedLine.contains("PROCESS") && trimmedLine.contains("GUIDANCE") -> {
+                    println("DEBUG: Starting thought process guidance section")
+                    currentSection = "thoughtProcessGuidance"
+                }
+                trimmedLine.startsWith("MODEL ANSWER:") || trimmedLine.startsWith("MODEL ANSWER") || trimmedLine.startsWith("IMPROVED VERSION:") || trimmedLine.startsWith("IMPROVED VERSION") || trimmedLine.contains("MODEL") && trimmedLine.contains("ANSWER") -> {
+                    println("DEBUG: Starting model answer section")
+                    currentSection = "modelAnswer"
+                }
+                else -> {
+                    if (trimmedLine.isNotEmpty()) {
+                        println("DEBUG: Adding to section '$currentSection': '$trimmedLine'")
+                        when (currentSection) {
+                            "feedback" -> {
+                                feedback += if (feedback.isEmpty()) trimmedLine else "\n$trimmedLine"
+                            }
+                            "wordAndPhraseSuggestions" -> {
+                                wordAndPhraseSuggestions += if (wordAndPhraseSuggestions.isEmpty()) trimmedLine else "\n$trimmedLine"
+                            }
+                            "betterAnswerSuggestions" -> {
+                                betterAnswerSuggestions += if (betterAnswerSuggestions.isEmpty()) trimmedLine else "\n$trimmedLine"
+                            }
+                            "thoughtProcessGuidance" -> {
+                                thoughtProcessGuidance += if (thoughtProcessGuidance.isEmpty()) trimmedLine else "\n$trimmedLine"
+                            }
+                            "modelAnswer" -> {
+                                modelAnswer += if (modelAnswer.isEmpty()) trimmedLine else "\n$trimmedLine"
+                            }
+                            else -> {
+                                // If no section is detected, add to feedback as fallback
+                                if (feedback.isEmpty() && !trimmedLine.startsWith("CLARITY SCORE:") && !trimmedLine.startsWith("LOGIC SCORE:") && !trimmedLine.startsWith("PERSPECTIVE SCORE:") && !trimmedLine.startsWith("DEPTH SCORE:")) {
+                                    println("DEBUG: Adding to feedback as fallback: '$trimmedLine'")
+                                    feedback += if (feedback.isEmpty()) trimmedLine else "\n$trimmedLine"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        println("DEBUG: Parsing completed")
+        println("DEBUG: Feedback length: ${feedback.length}")
+        println("DEBUG: Word suggestions length: ${wordAndPhraseSuggestions.length}")
+        println("DEBUG: Better answer suggestions length: ${betterAnswerSuggestions.length}")
+        println("DEBUG: Thought process guidance length: ${thoughtProcessGuidance.length}")
+        println("DEBUG: Model answer length: ${modelAnswer.length}")
+        println("DEBUG: Raw response text (first 500 chars): ${responseText.take(500)}")
+        
+        return AnswerEvaluation(
+            clarityScore = clarityScore,
+            logicScore = logicScore,
+            perspectiveScore = perspectiveScore,
+            depthScore = depthScore,
+            feedback = feedback.trim(),
+            wordAndPhraseSuggestions = wordAndPhraseSuggestions.trim(),
+            betterAnswerSuggestions = betterAnswerSuggestions.trim(),
+            thoughtProcessGuidance = thoughtProcessGuidance.trim(),
+            modelAnswer = modelAnswer.trim()
+        )
+    }
 
+    private fun parseFollowUpQuestions(responseText: String): List<String> {
+        val questionPattern = Pattern.compile("\\d+\\.\\s*(.*?)\\s*\\(Score:\\s*\\d+\\)")
+        val questions = mutableListOf<String>()
+        var matcher = questionPattern.matcher(responseText)
+        
+        while (matcher.find()) {
+            questions.add(matcher.group(1).trim())
+        }
+        return questions
+    }
+    
     // Settings operations
     override suspend fun getApiKey(): String? {
         val preferences = context.dataStore.data.first()
@@ -284,87 +478,6 @@ class ThinkSmarterRepositoryImpl(
                 insertCategory(Category(name = categoryName, isDefault = true))
             }
         }
-    }
-
-    private fun parseEvaluationResponse(responseText: String): AnswerEvaluation {
-        val lines = responseText.split("\n")
-        
-        var clarityScore = 5
-        var logicScore = 5
-        var perspectiveScore = 5
-        var depthScore = 5
-        var feedback = ""
-        var wordAndPhraseSuggestions = ""
-        var betterAnswerSuggestions = ""
-        var thoughtProcessGuidance = ""
-        var modelAnswer = ""
-        
-        var currentSection = ""
-        
-        for (line in lines) {
-            val trimmedLine = line.trim()
-            when {
-                trimmedLine.startsWith("CLARITY SCORE:") -> {
-                    clarityScore = trimmedLine.substringAfter("CLARITY SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
-                }
-                trimmedLine.startsWith("LOGIC SCORE:") -> {
-                    logicScore = trimmedLine.substringAfter("LOGIC SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
-                }
-                trimmedLine.startsWith("PERSPECTIVE SCORE:") -> {
-                    perspectiveScore = trimmedLine.substringAfter("PERSPECTIVE SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
-                }
-                trimmedLine.startsWith("DEPTH SCORE:") -> {
-                    depthScore = trimmedLine.substringAfter("DEPTH SCORE:").trim().substringBefore("[").trim().toIntOrNull() ?: 5
-                }
-                trimmedLine.startsWith("FEEDBACK:") -> {
-                    currentSection = "feedback"
-                }
-                trimmedLine.startsWith("WORD AND PHRASE SUGGESTIONS:") -> {
-                    currentSection = "wordAndPhraseSuggestions"
-                }
-                trimmedLine.startsWith("BETTER ANSWER SUGGESTIONS:") -> {
-                    currentSection = "betterAnswerSuggestions"
-                }
-                trimmedLine.startsWith("THOUGHT PROCESS GUIDANCE:") -> {
-                    currentSection = "thoughtProcessGuidance"
-                }
-                trimmedLine.startsWith("MODEL ANSWER:") -> {
-                    currentSection = "modelAnswer"
-                }
-                else -> {
-                    when (currentSection) {
-                        "feedback" -> feedback += if (feedback.isEmpty()) trimmedLine else "\n$trimmedLine"
-                        "wordAndPhraseSuggestions" -> wordAndPhraseSuggestions += if (wordAndPhraseSuggestions.isEmpty()) trimmedLine else "\n$trimmedLine"
-                        "betterAnswerSuggestions" -> betterAnswerSuggestions += if (betterAnswerSuggestions.isEmpty()) trimmedLine else "\n$trimmedLine"
-                        "thoughtProcessGuidance" -> thoughtProcessGuidance += if (thoughtProcessGuidance.isEmpty()) trimmedLine else "\n$trimmedLine"
-                        "modelAnswer" -> modelAnswer += if (modelAnswer.isEmpty()) trimmedLine else "\n$trimmedLine"
-                    }
-                }
-            }
-        }
-        
-        return AnswerEvaluation(
-            clarityScore = clarityScore,
-            logicScore = logicScore,
-            perspectiveScore = perspectiveScore,
-            depthScore = depthScore,
-            feedback = feedback.trim(),
-            wordAndPhraseSuggestions = wordAndPhraseSuggestions.trim(),
-            betterAnswerSuggestions = betterAnswerSuggestions.trim(),
-            thoughtProcessGuidance = thoughtProcessGuidance.trim(),
-            modelAnswer = modelAnswer.trim()
-        )
-    }
-
-    private fun parseFollowUpQuestions(responseText: String): List<String> {
-        val questionPattern = Pattern.compile("\\d+\\.\\s*(.*?)\\s*\\(Score:\\s*\\d+\\)")
-        val questions = mutableListOf<String>()
-        var matcher = questionPattern.matcher(responseText)
-        
-        while (matcher.find()) {
-            questions.add(matcher.group(1).trim())
-        }
-        return questions
     }
 
     private object PreferencesKeys {

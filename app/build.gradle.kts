@@ -85,6 +85,10 @@ dependencies {
     // DataStore
     implementation(libs.androidx.datastore.preferences)
 
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

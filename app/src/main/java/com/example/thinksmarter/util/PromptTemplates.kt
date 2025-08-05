@@ -113,4 +113,42 @@ object PromptTemplates {
             Make the questions progressively more challenging and thought-provoking.
         """.trimIndent()
     }
-} 
+    
+    fun improveTextPrompt(userText: String, textType: String = "General"): String {
+        return """
+            You are an expert writing coach. Analyze the following text and provide comprehensive feedback for improvement.
+            
+            TEXT TYPE: $textType
+            USER'S TEXT: $userText
+            
+            CRITICAL: You MUST provide ALL 9 sections below in EXACTLY this format. Do not skip any sections. Each section must start with the exact header shown.
+            
+            CLARITY SCORE: [1-10]
+            [Brief explanation of clarity score - how well ideas are communicated]
+            
+            LOGIC SCORE: [1-10]
+            [Brief explanation of logic score - logical flow and reasoning]
+            
+            PERSPECTIVE SCORE: [1-10]
+            [Brief explanation of perspective score - breadth of viewpoints]
+            
+            DEPTH SCORE: [1-10]
+            [Brief explanation of depth score - thoroughness and insight]
+            
+            FEEDBACK:
+            [Provide specific feedback on structure, clarity, and overall effectiveness. Include suggestions for better organization and expression. Be detailed and constructive.]
+            
+            WORD AND PHRASE SUGGESTIONS:
+            [Suggest 5-7 better words or phrases that could replace weaker language. Focus on more precise, impactful alternatives. Format as: "Instead of X, use Y" or "Replace X with Y".]
+            
+            BETTER ANSWER SUGGESTIONS:
+            [Provide 2-3 specific suggestions for how to improve the text. Include concrete examples of better phrasing, structure, or content. Be specific and actionable.]
+            
+            THOUGHT PROCESS GUIDANCE:
+            [Provide 2-3 suggestions for how the user could improve their writing process and approach similar texts in the future. Include step-by-step methods or frameworks.]
+            
+            MODEL ANSWER:
+            [Provide a comprehensive, well-structured version of the text that serves as an excellent example. This should be a complete rewrite that demonstrates best practices.]
+        """.trimIndent()
+    }
+}

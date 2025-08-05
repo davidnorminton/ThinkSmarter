@@ -1,5 +1,6 @@
 package com.example.thinksmarter.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +26,7 @@ import com.example.thinksmarter.ui.theme.accent_purple
 fun RecentQuestionsScreen(
     questionsWithAnswers: List<QuestionWithAnswer>,
     onNavigateBack: () -> Unit,
+    onQuestionClick: (QuestionWithAnswer) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -85,25 +87,39 @@ fun RecentQuestionsScreen(
             } else {
                 items(questionsWithAnswers) { questionWithAnswer ->
                     ModernCard(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onQuestionClick(questionWithAnswer) }
                     ) {
                         Column(
                             modifier = Modifier.padding(20.dp)
                         ) {
                             Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    Icons.Default.Create,
-                                    contentDescription = "Question",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.Create,
+                                        contentDescription = "Question",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = "Question",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                // Add a subtle indicator that this is clickable
                                 Text(
-                                    text = "Question",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Medium
+                                    text = "Tap to view details",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                             Spacer(modifier = Modifier.height(16.dp))
