@@ -9,6 +9,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ fun DrawerMenu(
     onNavigateToDailyChallenge: () -> Unit,
     onNavigateToRecentQuestions: () -> Unit,
     onNavigateToTextImprovement: () -> Unit,
+    onNavigateToRandomFacts: () -> Unit,
     onNavigateToUserProfile: () -> Unit,
     onClose: () -> Unit,
     userProfile: UserProfile? = null,
@@ -62,6 +64,14 @@ fun DrawerMenu(
                 onClick = {
                     onClose()
                     onNavigateToTextImprovement()
+                }
+            ),
+            DrawerMenuItem(
+                title = "Random Facts",
+                icon = { Icon(Icons.Default.Info, contentDescription = null) },
+                onClick = {
+                    onClose()
+                    onNavigateToRandomFacts()
                 }
             ),
             DrawerMenuItem(

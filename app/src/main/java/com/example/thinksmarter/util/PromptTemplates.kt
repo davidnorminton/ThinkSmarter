@@ -151,4 +151,24 @@ object PromptTemplates {
             [Provide a comprehensive, well-structured version of the text that serves as an excellent example. This should be a complete rewrite that demonstrates best practices.]
         """.trimIndent()
     }
+    
+    fun generateRandomFactPrompt(category: String): String {
+        return """
+            You are an expert educator and knowledge curator. Generate an interesting, educational random fact from the $category category.
+            
+            Requirements:
+            - Make it genuinely interesting and surprising
+            - Keep it concise (2-3 sentences maximum)
+            - Ensure it's accurate and educational
+            - Make it engaging and memorable
+            - Focus on lesser-known facts rather than common knowledge
+            - Include a brief explanation of why it's interesting
+            - Make it relevant to the $category category
+            
+            Format your response as just the fact with its brief explanation, nothing else.
+            
+            Example format:
+            "The human brain can process images in as little as 13 milliseconds - faster than the blink of an eye. This incredible speed allows us to quickly identify threats and opportunities in our environment."
+        """.trimIndent()
+    }
 }

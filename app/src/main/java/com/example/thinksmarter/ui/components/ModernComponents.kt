@@ -89,12 +89,11 @@ fun GradientCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModernButton(
-    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isLoading: Boolean = false,
     enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null
+    isLoading: Boolean = false,
+    content: @Composable RowScope.() -> Unit
 ) {
     val interactionSource = remember<MutableInteractionSource> { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -144,25 +143,7 @@ fun ModernButton(
                     trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
                 )
             } else {
-                icon?.let {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        it()
-                        Text(
-                            text = text,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                } ?: run {
-                    Text(
-                        text = text,
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                content()
             }
         }
     }

@@ -185,12 +185,14 @@ fun SettingsScreen(
             // Save button
             item {
                 ModernButton(
-                    text = "Save Settings",
                     onClick = { onEvent(SettingsUiEvent.SaveSettings) },
                     isLoading = uiState.isLoading,
-                    modifier = Modifier.fillMaxWidth(),
-                    icon = { Icon(Icons.Default.Check, contentDescription = null) }
-                )
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Save Settings")
+                }
             }
 
             // Instructions

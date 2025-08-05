@@ -46,6 +46,7 @@ fun MainScreen(
     onNavigateToDailyChallenge: () -> Unit,
     onNavigateToRecentQuestions: () -> Unit,
     onNavigateToTextImprovement: () -> Unit,
+    onNavigateToRandomFacts: () -> Unit,
     onNavigateToUserProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -63,6 +64,7 @@ fun MainScreen(
                     onNavigateToDailyChallenge = onNavigateToDailyChallenge,
                     onNavigateToRecentQuestions = onNavigateToRecentQuestions,
                     onNavigateToTextImprovement = onNavigateToTextImprovement,
+                    onNavigateToRandomFacts = onNavigateToRandomFacts,
                     onNavigateToUserProfile = onNavigateToUserProfile,
                     userProfile = uiState.userProfile,
                     onClose = { 
@@ -659,12 +661,14 @@ fun MainScreen(
                     item {
                         uiState.evaluation?.let { evaluation ->
                             ModernButton(
-                                text = "Ask Another Question",
                                 onClick = { onEvent(MainUiEvent.GenerateQuestion) },
                                 isLoading = uiState.isGeneratingQuestion,
-                                modifier = Modifier.fillMaxWidth(),
-                                icon = { Icon(Icons.Default.Refresh, contentDescription = null) }
-                            )
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Refresh, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Ask Another Question")
+                            }
                         }
                     }
                 }

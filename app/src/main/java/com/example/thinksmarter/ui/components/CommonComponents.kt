@@ -19,19 +19,20 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingButton(
-    text: String,
     onClick: () -> Unit,
     isLoading: Boolean,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    content: @Composable RowScope.() -> Unit
 ) {
     ModernButton(
-        text = text,
         onClick = onClick,
         isLoading = isLoading,
         enabled = enabled,
         modifier = modifier
-    )
+    ) {
+        content()
+    }
 }
 
 @Composable

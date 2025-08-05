@@ -147,10 +147,12 @@ fun UserProfileScreen(
                     // Logout button
                     item {
                         ModernButton(
-                            text = "Logout",
                             onClick = { onEvent(UserProfileUiEvent.SignOut) },
-                            icon = { Icon(Icons.Default.ExitToApp, contentDescription = "Logout") }
-                        )
+                        ) {
+                            Icon(Icons.Default.ExitToApp, contentDescription = "Logout")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Logout")
+                        }
                     }
                 }
                 
@@ -184,10 +186,11 @@ fun UserProfileScreen(
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                                 ModernButton(
-                                    text = "Sign in with Google",
                                     onClick = { onEvent(UserProfileUiEvent.SignInWithGoogle) },
                                     modifier = Modifier.fillMaxWidth()
-                                )
+                                ) {
+                                    Text("Sign in with Google")
+                                }
                             }
                         }
                     }

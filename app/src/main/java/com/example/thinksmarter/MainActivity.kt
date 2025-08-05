@@ -23,6 +23,7 @@ import com.example.thinksmarter.ui.screens.DailyChallengeScreen
 import com.example.thinksmarter.ui.screens.TextImprovementScreen
 import com.example.thinksmarter.ui.screens.QuestionDetailScreen
 import com.example.thinksmarter.ui.screens.UserProfileScreen
+import com.example.thinksmarter.ui.screens.RandomFactsScreen
 import com.example.thinksmarter.data.model.QuestionWithAnswer
 import com.example.thinksmarter.ui.theme.ThinkSmarterTheme
 import com.example.thinksmarter.ui.viewmodel.MainViewModel
@@ -32,6 +33,7 @@ import com.example.thinksmarter.ui.viewmodel.DailyChallengeViewModel
 import com.example.thinksmarter.ui.viewmodel.RecentQuestionsViewModel
 import com.example.thinksmarter.ui.viewmodel.TextImprovementViewModel
 import com.example.thinksmarter.ui.viewmodel.UserProfileViewModel
+import com.example.thinksmarter.ui.viewmodel.RandomFactsViewModel
 import com.example.thinksmarter.data.auth.UserAuthManager
 import com.example.thinksmarter.data.auth.AuthState
 import androidx.activity.result.contract.ActivityResultContracts
@@ -149,6 +151,7 @@ class MainActivity : ComponentActivity() {
                                         onNavigateToDailyChallenge = { navController.navigate("daily_challenge") },
                                         onNavigateToRecentQuestions = { navController.navigate("recent_questions") },
                                         onNavigateToTextImprovement = { navController.navigate("text_improvement") },
+                                        onNavigateToRandomFacts = { navController.navigate("random_facts") },
                                         onNavigateToUserProfile = { navController.navigate("user_profile") }
                                     )
                                 }
@@ -234,6 +237,21 @@ class MainActivity : ComponentActivity() {
                                     TextImprovementScreen(
                                         uiState = uiState,
                                         onEvent = textImprovementViewModel::onEvent,
+                                        onNavigateBack = { navController.popBackStack() }
+                                    )
+                                }
+                                
+                                composable("random_facts") {
+                                    println("DEBUG: Creating RandomFactsViewModel")
+                                    val randomFactsViewModel: RandomFactsViewModel = viewModel {
+                                        RandomFactsViewModel(repository)
+                                    }
+                                    val uiState by randomFactsViewModel.uiState.collectAsState()
+                                    println("DEBUG: RandomFacts uiState: $uiState")
+
+                                    RandomFactsScreen(
+                                        uiState = uiState,
+                                        onEvent = randomFactsViewModel::handleEvent,
                                         onNavigateBack = { navController.popBackStack() }
                                     )
                                 }

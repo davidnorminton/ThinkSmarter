@@ -67,6 +67,9 @@ interface ThinkSmarterRepository {
     
     // Initialization operations
     suspend fun initializeDefaultCategories()
+    
+    // Random facts
+    suspend fun generateRandomFact(category: String): Result<String>
 }
 
 data class AnswerEvaluation(

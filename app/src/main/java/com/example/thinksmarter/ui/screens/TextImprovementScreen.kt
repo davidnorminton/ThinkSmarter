@@ -148,13 +148,15 @@ fun TextImprovementScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     ModernButton(
-                        text = "Analyze & Improve",
                         onClick = { onEvent(TextImprovementUiEvent.AnalyzeText) },
                         isLoading = uiState.isAnalyzing,
                         enabled = uiState.userText.isNotBlank() && !uiState.isAnalyzing,
-                        modifier = Modifier.fillMaxWidth(),
-                        icon = { Icon(Icons.Default.Create, contentDescription = null) }
-                    )
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Create, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Analyze & Improve")
+                    }
                 }
             }
         }

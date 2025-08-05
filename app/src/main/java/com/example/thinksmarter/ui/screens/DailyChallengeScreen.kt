@@ -238,11 +238,12 @@ fun TodayChallengeCard(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     LoadingButton(
-                        text = "Generate Challenge",
                         onClick = onGenerateChallenge,
                         isLoading = isGenerating,
                         modifier = Modifier.fillMaxWidth()
-                    )
+                    ) {
+                        Text("Generate Challenge")
+                    }
                 }
             } else if (challenge.isCompleted) {
                 // Challenge completed
@@ -298,12 +299,13 @@ fun TodayChallengeCard(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     LoadingButton(
-                        text = "Submit Answer",
                         onClick = { onSubmitAnswer(userAnswer) },
                         isLoading = false,
                         enabled = userAnswer.isNotBlank(),
                         modifier = Modifier.fillMaxWidth()
-                    )
+                    ) {
+                        Text("Submit Answer")
+                    }
                 }
             }
         }

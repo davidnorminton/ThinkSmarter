@@ -479,6 +479,35 @@ class ThinkSmarterRepositoryImpl(
             }
         }
     }
+    
+    override suspend fun generateRandomFact(category: String): Result<String> {
+        return try {
+            println("DEBUG: Generating random fact for category: $category")
+            
+            val apiKey = getApiKey()
+            if (apiKey == null) {
+                return Result.failure(Exception("API key not configured"))
+            }
+            
+            val prompt = PromptTemplates.generateRandomFactPrompt(category)
+            println("DEBUG: Using prompt: $prompt")
+            
+            val request = AnthropicRequest(
+                model = "claude-3-7-sonnet-latest",
+                max_tokens = 500,
+                messages = listOf(Message(role = "user", content = prompt))
+            )
+            
+            val response = anthropicApi.generateQuestion(apiKey, request = request)
+            println("DEBUG: Random fact generated successfully")
+            
+            Result.success(response.content.first().text)
+        } catch (e: Exception) {
+            println("DEBUG: Error generating random fact: ${e.message}")
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
 
     private object PreferencesKeys {
         val API_KEY = stringPreferencesKey("api_key")
