@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.thinksmarter.data.auth.AuthState
 import com.example.thinksmarter.data.auth.UserAuthManager
 import com.example.thinksmarter.data.auth.UserProfile
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class UserProfileUiState(
     val authState: AuthState = AuthState.NotAuthenticated,
@@ -22,7 +24,8 @@ sealed class UserProfileUiEvent {
     object ClearError : UserProfileUiEvent()
 }
 
-class UserProfileViewModel(
+@HiltViewModel
+class UserProfileViewModel @Inject constructor(
     private val userAuthManager: UserAuthManager
 ) : ViewModel() {
     
@@ -63,4 +66,4 @@ class UserProfileViewModel(
     fun handleSignInResult(data: android.content.Intent?) {
         userAuthManager.handleSignInResult(data)
     }
-} 
+}

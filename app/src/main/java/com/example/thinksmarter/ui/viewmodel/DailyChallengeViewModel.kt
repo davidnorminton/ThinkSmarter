@@ -3,14 +3,16 @@ package com.example.thinksmarter.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thinksmarter.data.model.DailyChallenge
-import com.example.thinksmarter.data.model.UserStreak
 import com.example.thinksmarter.data.model.Question
+import com.example.thinksmarter.data.model.UserStreak
 import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import javax.inject.Inject
 
 data class DailyChallengeUiState(
     val todayChallenge: DailyChallenge? = null,
@@ -27,7 +29,8 @@ sealed class DailyChallengeUiEvent {
     data class SubmitDailyAnswer(val answer: String) : DailyChallengeUiEvent()
 }
 
-class DailyChallengeViewModel(
+@HiltViewModel
+class DailyChallengeViewModel @Inject constructor(
     private val repository: ThinkSmarterRepository
 ) : ViewModel() {
 
@@ -175,4 +178,4 @@ class DailyChallengeViewModel(
             }
         }
     }
-} 
+}

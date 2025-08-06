@@ -22,6 +22,7 @@ fun SettingsScreen(
     uiState: SettingsUiState,
     onEvent: (SettingsUiEvent) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToManageCategories: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -180,6 +181,16 @@ fun SettingsScreen(
                         )
                     }
                 }
+            }
+
+            // Category Management
+            item {
+                ModernOutlinedButton(
+                    text = "Manage Categories",
+                    onClick = { onNavigateToManageCategories() },
+                    modifier = Modifier.fillMaxWidth(),
+                    icon = { Icon(Icons.Default.List, contentDescription = null) }
+                )
             }
 
             // Save button

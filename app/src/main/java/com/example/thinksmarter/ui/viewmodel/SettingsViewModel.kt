@@ -3,10 +3,12 @@ package com.example.thinksmarter.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class SettingsUiState(
     val apiKey: String = "",
@@ -31,7 +33,8 @@ sealed class SettingsUiEvent {
     object ClearSuccessMessage : SettingsUiEvent()
 }
 
-class SettingsViewModel(
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
     private val repository: ThinkSmarterRepository
 ) : ViewModel() {
 
@@ -145,4 +148,4 @@ class SettingsViewModel(
             }
         }
     }
-} 
+}

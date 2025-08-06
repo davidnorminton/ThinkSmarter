@@ -29,6 +29,8 @@ fun RecentQuestionsScreen(
     onQuestionClick: (QuestionWithAnswer) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val answeredQuestions = questionsWithAnswers.filter { it.answer != null }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,7 +56,7 @@ fun RecentQuestionsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            if (questionsWithAnswers.isEmpty()) {
+            if (answeredQuestions.isEmpty()) {
                 item {
                     ModernCard(
                         modifier = Modifier.fillMaxWidth()
@@ -71,13 +73,13 @@ fun RecentQuestionsScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "No Recent Questions",
+                                text = "No Answered Questions Yet",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Start by asking your first question!",
+                                text = "Answer a question to see your history here!",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -85,7 +87,7 @@ fun RecentQuestionsScreen(
                     }
                 }
             } else {
-                items(questionsWithAnswers) { questionWithAnswer ->
+                items(answeredQuestions) { questionWithAnswer ->
                     ModernCard(
                         modifier = Modifier
                             .fillMaxWidth()

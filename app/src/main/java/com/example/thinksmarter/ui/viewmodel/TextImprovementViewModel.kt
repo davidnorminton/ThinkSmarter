@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thinksmarter.data.model.TextImprovement
 import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class TextImprovementUiState(
     val userText: String = "",
@@ -27,7 +29,8 @@ sealed class TextImprovementUiEvent {
     object ClearEvaluation : TextImprovementUiEvent()
 }
 
-class TextImprovementViewModel(
+@HiltViewModel
+class TextImprovementViewModel @Inject constructor(
     private val repository: ThinkSmarterRepository
 ) : ViewModel() {
     

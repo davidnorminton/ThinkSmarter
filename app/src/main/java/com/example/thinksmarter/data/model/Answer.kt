@@ -3,7 +3,10 @@ package com.example.thinksmarter.data.model
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
+import android.os.Parcelable
 
+@Parcelize
 @Entity(
     tableName = "answers",
     foreignKeys = [
@@ -33,4 +36,4 @@ data class Answer(
     val thoughtProcessGuidance: String,
     val modelAnswer: String,
     val timestamp: Long = System.currentTimeMillis()
-) 
+) : Parcelable 

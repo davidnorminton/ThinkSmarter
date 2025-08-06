@@ -15,8 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.example.thinksmarter.data.model.QuestionWithAnswer
 import com.example.thinksmarter.ui.components.*
 import com.example.thinksmarter.ui.theme.*
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun QuestionDetailScreen(
     questionWithAnswer: QuestionWithAnswer,
@@ -139,40 +141,29 @@ fun QuestionDetailScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             
                             // Scores
-                            Row(
+                            FlowRow(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 ModernScoreCard(
                                     title = "Clarity",
                                     score = answer.clarityScore,
-                                    modifier = Modifier.weight(1f),
                                     color = accent_blue
                                 )
                                 ModernScoreCard(
                                     title = "Logic",
                                     score = answer.logicScore,
-                                    modifier = Modifier.weight(1f),
                                     color = accent_green
                                 )
-                            }
-                            
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
                                 ModernScoreCard(
                                     title = "Perspective",
                                     score = answer.perspectiveScore,
-                                    modifier = Modifier.weight(1f),
                                     color = accent_orange
                                 )
                                 ModernScoreCard(
                                     title = "Depth",
                                     score = answer.depthScore,
-                                    modifier = Modifier.weight(1f),
                                     color = accent_purple
                                 )
                             }

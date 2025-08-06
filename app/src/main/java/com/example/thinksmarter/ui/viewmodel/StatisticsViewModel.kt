@@ -2,14 +2,16 @@ package com.example.thinksmarter.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.thinksmarter.data.model.Statistics
 import com.example.thinksmarter.data.model.CategoryStats
+import com.example.thinksmarter.data.model.Statistics
 import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class StatisticsUiState(
     val statistics: Statistics = Statistics(),
@@ -17,7 +19,8 @@ data class StatisticsUiState(
     val error: String? = null
 )
 
-class StatisticsViewModel(
+@HiltViewModel
+class StatisticsViewModel @Inject constructor(
     private val repository: ThinkSmarterRepository
 ) : ViewModel() {
 
@@ -132,4 +135,4 @@ class StatisticsViewModel(
             categoryStats = categoryStatsMap
         )
     }
-} 
+}

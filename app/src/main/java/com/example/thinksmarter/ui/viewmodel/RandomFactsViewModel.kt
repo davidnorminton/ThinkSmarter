@@ -2,12 +2,14 @@ package com.example.thinksmarter.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
 import com.example.thinksmarter.data.model.Category
+import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class RandomFactsUiState(
     val currentFact: String? = null,
@@ -23,7 +25,8 @@ sealed class RandomFactsUiEvent {
     object ClearError : RandomFactsUiEvent()
 }
 
-class RandomFactsViewModel(
+@HiltViewModel
+class RandomFactsViewModel @Inject constructor(
     private val repository: ThinkSmarterRepository
 ) : ViewModel() {
 
@@ -98,4 +101,4 @@ class RandomFactsViewModel(
             }
         }
     }
-} 
+}

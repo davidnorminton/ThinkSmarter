@@ -2,17 +2,19 @@ package com.example.thinksmarter.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.thinksmarter.data.model.Question
-import com.example.thinksmarter.data.model.Answer
-import com.example.thinksmarter.data.model.QuestionWithAnswer
-import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
-import com.example.thinksmarter.domain.repository.AnswerEvaluation
 import com.example.thinksmarter.data.auth.UserProfile
+import com.example.thinksmarter.data.model.Answer
+import com.example.thinksmarter.data.model.Category
+import com.example.thinksmarter.data.model.Question
+import com.example.thinksmarter.data.model.QuestionWithAnswer
+import com.example.thinksmarter.domain.repository.AnswerEvaluation
+import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.example.thinksmarter.data.model.Category
+import javax.inject.Inject
 
 data class MainUiState(
     val currentQuestion: Question? = null,
@@ -40,7 +42,8 @@ sealed class MainUiEvent {
     data class UpdateUserProfile(val userProfile: UserProfile?) : MainUiEvent()
 }
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val repository: ThinkSmarterRepository
 ) : ViewModel() {
 
