@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import com.example.thinksmarter.data.model.DailyChallenge
 import com.example.thinksmarter.data.model.UserStreak
 import com.example.thinksmarter.data.model.TextImprovement
+import com.example.thinksmarter.data.model.RandomFact
 import com.example.thinksmarter.data.network.Message
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -38,6 +39,7 @@ class ThinkSmarterRepositoryImpl(
     private val answerDao = database.answerDao()
     private val categoryDao = database.categoryDao()
     private val dailyChallengeDao = database.dailyChallengeDao()
+    private val randomFactDao = database.randomFactDao()
 
     // Question operations
     override fun getAllQuestions(): Flow<List<Question>> = questionDao.getAllQuestions()
@@ -507,6 +509,18 @@ class ThinkSmarterRepositoryImpl(
             e.printStackTrace()
             Result.failure(e)
         }
+    }
+
+    override suspend fun saveRandomFact(fact: RandomFact) {
+        randomFactDao.insertFact(fact)
+    }
+
+    override fun getRandomFactsByCategory(category: String): Flow<List<RandomFact>> {
+        return randomFactDao.getFactsByCategory(category)
+    }
+
+    override fun getAllRandomFacts(): Flow<List<RandomFact>> {
+        return randomFactDao.getAllFacts()
     }
 
     private object PreferencesKeys {

@@ -3,6 +3,7 @@ package com.example.thinksmarter.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thinksmarter.data.model.Category
+import com.example.thinksmarter.data.model.RandomFact
 import com.example.thinksmarter.domain.repository.ThinkSmarterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ data class RandomFactsUiState(
     val currentFact: String? = null,
     val selectedCategory: String = "General",
     val availableCategories: List<Category> = emptyList(),
+    val previousFacts: List<RandomFact> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -35,6 +37,7 @@ class RandomFactsViewModel @Inject constructor(
 
     init {
         loadCategories()
+        loadRandomFacts()
     }
 
     fun handleEvent(event: RandomFactsUiEvent) {
@@ -56,10 +59,21 @@ class RandomFactsViewModel @Inject constructor(
                 val result = repository.generateRandomFact(_uiState.value.selectedCategory)
                 result.fold(
                     onSuccess = { fact ->
+                        // Save the fact to database
+                        val randomFact = RandomFact(
+                            category = _uiState.value.selectedCategory,
+                            fact = fact,
+                            timestamp = java.time.LocalDateTime.now()
+                        )
+                        repository.saveRandomFact(randomFact)
+                        
                         _uiState.value = _uiState.value.copy(
                             currentFact = fact,
                             isLoading = false
                         )
+                        
+                        // Reload previous facts
+                        loadRandomFacts()
                     },
                     onFailure = { exception ->
                         _uiState.value = _uiState.value.copy(
@@ -82,6 +96,7 @@ class RandomFactsViewModel @Inject constructor(
             selectedCategory = category,
             currentFact = null // Clear current fact when category changes
         )
+        loadRandomFacts()
     }
 
     private fun clearError() {
@@ -97,6 +112,20 @@ class RandomFactsViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     error = "Failed to load categories: ${e.message}"
+                )
+            }
+        }
+    }
+
+    private fun loadRandomFacts() {
+        viewModelScope.launch {
+            try {
+                repository.getRandomFactsByCategory(_uiState.value.selectedCategory).collect { facts ->
+                    _uiState.value = _uiState.value.copy(previousFacts = facts)
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to load previous facts: ${e.message}"
                 )
             }
         }

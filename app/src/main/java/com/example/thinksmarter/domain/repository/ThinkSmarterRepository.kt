@@ -7,6 +7,7 @@ import com.example.thinksmarter.data.model.Category
 import com.example.thinksmarter.data.model.DailyChallenge
 import com.example.thinksmarter.data.model.UserStreak
 import com.example.thinksmarter.data.model.TextImprovement
+import com.example.thinksmarter.data.model.RandomFact
 import kotlinx.coroutines.flow.Flow
 
 interface ThinkSmarterRepository {
@@ -70,6 +71,9 @@ interface ThinkSmarterRepository {
     
     // Random facts
     suspend fun generateRandomFact(category: String): Result<String>
+    suspend fun saveRandomFact(fact: RandomFact)
+    fun getRandomFactsByCategory(category: String): Flow<List<RandomFact>>
+    fun getAllRandomFacts(): Flow<List<RandomFact>>
 }
 
 data class AnswerEvaluation(
