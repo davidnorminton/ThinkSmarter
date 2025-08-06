@@ -2,18 +2,13 @@ package com.example.thinksmarter.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,18 +17,14 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
 import com.example.thinksmarter.data.model.Category
 import com.example.thinksmarter.data.model.QuestionWithAnswer
 import com.example.thinksmarter.ui.components.*
 import com.example.thinksmarter.ui.theme.*
 import com.example.thinksmarter.ui.viewmodel.MainUiEvent
 import com.example.thinksmarter.ui.viewmodel.MainUiState
-import com.example.thinksmarter.ui.viewmodel.MainViewModel
 import com.example.thinksmarter.domain.repository.AnswerEvaluation
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -131,7 +122,7 @@ fun MainScreen(
                                         )
                                     } else {
                                         Icon(
-                                            Icons.Default.Send,
+                                            Icons.AutoMirrored.Filled.Send,
                                             contentDescription = "Submit Answer",
                                             modifier = Modifier.size(24.dp)
                                         )
@@ -191,37 +182,36 @@ fun MainScreen(
                         .padding(paddingValues)
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(top = 16.dp, bottom = 96.dp) // Extra padding for bottom button
+                    contentPadding = PaddingValues(top = 16.dp, bottom = 96.dp)
                 ) {
                     // Error message
                     uiState.error?.let { error ->
                         item {
                             ModernCard(
-                                modifier = Modifier.fillMaxWidth(),
-                                content = {
-                                    Row(
-                                        modifier = Modifier.padding(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            Icons.Default.Warning,
-                                            contentDescription = "Error",
-                                            tint = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Text(
-                                            text = error,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.Warning,
+                                        contentDescription = "Error",
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text(
+                                        text = error,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
                                 }
-                            )
+                            }
                         }
                     }
 
-                    // Current question - hide when generating, evaluating, or when evaluation is present
+                    // Current question
                     item {
                         uiState.currentQuestion?.let { question ->
                             if (!uiState.isGeneratingQuestion && !uiState.isEvaluatingAnswer && uiState.evaluation == null) {
@@ -278,49 +268,9 @@ fun MainScreen(
                         }
                     }
 
-                    // Expected length card - hide when generating, evaluating, or when evaluation is present
+                    // Answer input
                     item {
-                        uiState.currentQuestion?.let { question ->
-                            if (!uiState.isGeneratingQuestion && !uiState.isEvaluatingAnswer && uiState.evaluation == null) {
-                                ModernCard(
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            Icons.Default.Create,
-                                            contentDescription = "Answer Length",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Column {
-                                            Text(
-                                                text = "Expected Answer Length",
-                                                style = MaterialTheme.typography.titleSmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                            Text(
-                                                text = when {
-                                                    question.difficulty <= 3 -> "Short (1-3 sentences)"
-                                                    question.difficulty <= 7 -> "Medium (4-6 sentences)"
-                                                    else -> "Long (7+ sentences)"
-                                                },
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Answer input - only show when question is available, not evaluating, and no evaluation present
-                    item {
-                        uiState.currentQuestion?.let { question ->
+                        uiState.currentQuestion?.let { _ ->
                             if (!uiState.isEvaluatingAnswer && !uiState.isGeneratingQuestion && uiState.evaluation == null) {
                                 val focusRequester = remember { FocusRequester() }
                                 
@@ -343,7 +293,7 @@ fun MainScreen(
                         }
                     }
 
-                    // Difficulty slider - hide when generating, evaluating, or when evaluation is present
+                    // Difficulty slider
                     item {
                         if (!uiState.isGeneratingQuestion && !uiState.isEvaluatingAnswer && uiState.evaluation == null) {
                             ModernCard(
@@ -367,7 +317,7 @@ fun MainScreen(
                         }
                     }
 
-                    // Category selection - hide when generating, evaluating, or when evaluation is present
+                    // Category selection
                     item {
                         if (!uiState.isGeneratingQuestion && !uiState.isEvaluatingAnswer && uiState.evaluation == null) {
                             ModernCard(
@@ -659,7 +609,7 @@ fun MainScreen(
 
                     // Ask Another Question button after feedback
                     item {
-                        uiState.evaluation?.let { evaluation ->
+                        uiState.evaluation?.let { _ ->
                             ModernButton(
                                 onClick = { onEvent(MainUiEvent.GenerateQuestion) },
                                 isLoading = uiState.isGeneratingQuestion,
@@ -672,134 +622,6 @@ fun MainScreen(
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun EvaluationResults(
-    evaluation: AnswerEvaluation,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Evaluation Results",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Scores
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ScoreCard(
-                    title = "Clarity",
-                    score = evaluation.clarityScore,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                ScoreCard(
-                    title = "Logic",
-                    score = evaluation.logicScore,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ScoreCard(
-                    title = "Perspective",
-                    score = evaluation.perspectiveScore,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                ScoreCard(
-                    title = "Depth",
-                    score = evaluation.depthScore,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Feedback
-            Text(
-                text = "Feedback",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = evaluation.feedback,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Model answer
-            Text(
-                text = "Model Answer",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = evaluation.modelAnswer,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        }
-    }
-}
-
-@Composable
-fun HistoryItem(
-    questionWithAnswer: QuestionWithAnswer,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = questionWithAnswer.question.text,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth()
-            )
-            
-            questionWithAnswer.answer?.let { answer ->
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Your Answer: ${answer.userAnswer}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Scores: C${answer.clarityScore} L${answer.logicScore} P${answer.perspectiveScore} D${answer.depthScore}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
             }
         }
     }

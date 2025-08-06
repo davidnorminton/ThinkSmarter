@@ -2,17 +2,17 @@ package com.example.thinksmarter.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.thinksmarter.ui.components.*
 import com.example.thinksmarter.ui.theme.*
@@ -34,7 +34,7 @@ fun UserProfileScreen(
                 title = { Text("Profile") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -148,8 +148,9 @@ fun UserProfileScreen(
                     item {
                         ModernButton(
                             onClick = { onEvent(UserProfileUiEvent.SignOut) },
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Icon(Icons.Default.ExitToApp, contentDescription = "Logout")
+                            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Logout")
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Logout")
                         }
@@ -182,7 +183,8 @@ fun UserProfileScreen(
                                 Text(
                                     text = "Sign in to sync your progress across devices",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.height(24.dp))
                                 ModernButton(
@@ -202,4 +204,4 @@ fun UserProfileScreen(
             }
         }
     }
-} 
+}

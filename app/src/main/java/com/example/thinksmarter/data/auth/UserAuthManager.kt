@@ -12,6 +12,8 @@ import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 data class UserProfile(
     val id: String,
@@ -27,7 +29,8 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
-class UserAuthManager(private val context: Context) {
+@Singleton
+class UserAuthManager @Inject constructor(private val context: Context) {
     
     private val _authState = MutableStateFlow<AuthState>(AuthState.NotAuthenticated)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
@@ -53,11 +56,6 @@ class UserAuthManager(private val context: Context) {
         println("DEBUG: GoogleSignInOptions built successfully")
         googleSignInClient = GoogleSignIn.getClient(context, gso)
         println("DEBUG: Google Sign-In client created")
-        
-        // Check if Google Play Services is available
-        val googleApiAvailability = com.google.android.gms.common.GoogleApiAvailability.getInstance()
-        val resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context)
-        println("DEBUG: Google Play Services availability: $resultCode")
     }
     
     private fun checkCurrentUser() {
@@ -136,4 +134,4 @@ class UserAuthManager(private val context: Context) {
             photoUrl = photoUrl?.toString()
         )
     }
-} 
+}
