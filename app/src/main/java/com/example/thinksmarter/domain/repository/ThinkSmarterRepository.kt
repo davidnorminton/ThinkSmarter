@@ -8,6 +8,7 @@ import com.example.thinksmarter.data.model.DailyChallenge
 import com.example.thinksmarter.data.model.UserStreak
 import com.example.thinksmarter.data.model.TextImprovement
 import com.example.thinksmarter.data.model.RandomFact
+import com.example.thinksmarter.data.model.MetacognitionResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ThinkSmarterRepository {
@@ -77,6 +78,8 @@ interface ThinkSmarterRepository {
     
     // Metacognitive guidance
     suspend fun generateMetacognitiveGuidance(userInput: String): Result<String>
+    suspend fun saveMetacognitionResponse(response: MetacognitionResponse)
+    fun getAllMetacognitionResponses(): Flow<List<MetacognitionResponse>>
 }
 
 data class AnswerEvaluation(

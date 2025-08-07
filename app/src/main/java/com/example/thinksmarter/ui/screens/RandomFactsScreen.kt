@@ -28,8 +28,7 @@ import com.example.thinksmarter.ui.viewmodel.RandomFactsUiEvent
 fun RandomFactsScreen(
     uiState: RandomFactsUiState,
     onEvent: (RandomFactsUiEvent) -> Unit,
-    onNavigateBack: () -> Unit,
-    onNavigateToPreviousFacts: () -> Unit
+    onNavigateBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -179,17 +178,7 @@ fun RandomFactsScreen(
                 }
             }
             
-            // View Previous Facts Button
-            item {
-                ModernButton(
-                    onClick = onNavigateToPreviousFacts,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.Info, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("View Previous Facts")
-                }
-            }
+
             
             // Empty state when no fact is generated
             if (uiState.currentFact == null && !uiState.isLoading && uiState.error == null) {

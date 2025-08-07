@@ -1,5 +1,6 @@
 package com.example.thinksmarter.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
@@ -33,10 +34,10 @@ fun DrawerMenu(
     onNavigateToSettings: () -> Unit,
     onNavigateToStatistics: () -> Unit,
     onNavigateToDailyChallenge: () -> Unit,
-    onNavigateToRecentQuestions: () -> Unit,
     onNavigateToTextImprovement: () -> Unit,
     onNavigateToRandomFacts: () -> Unit,
     onNavigateToMetacognition: () -> Unit,
+    onNavigateToHistory: () -> Unit,
     onNavigateToUserProfile: () -> Unit,
     onClose: () -> Unit,
     userProfile: UserProfile? = null,
@@ -52,14 +53,6 @@ fun DrawerMenu(
         HorizontalDivider()
         
         val menuItems = listOf(
-            DrawerMenuItem(
-                title = "Recent Questions",
-                icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                onClick = {
-                    onClose()
-                    onNavigateToRecentQuestions()
-                }
-            ),
             DrawerMenuItem(
                 title = "Text Improvement",
                 icon = { Icon(Icons.Default.Edit, contentDescription = null) },
@@ -82,6 +75,23 @@ fun DrawerMenu(
                 onClick = {
                     onClose()
                     onNavigateToMetacognition()
+                }
+            ),
+            DrawerMenuItem(
+                title = "History",
+                icon = { 
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = androidx.compose.foundation.shape.CircleShape
+                            )
+                    )
+                },
+                onClick = {
+                    onClose()
+                    onNavigateToHistory()
                 }
             ),
             DrawerMenuItem(

@@ -35,10 +35,10 @@ fun MainScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToStatistics: () -> Unit,
     onNavigateToDailyChallenge: () -> Unit,
-    onNavigateToRecentQuestions: () -> Unit,
     onNavigateToTextImprovement: () -> Unit,
     onNavigateToRandomFacts: () -> Unit,
     onNavigateToMetacognition: () -> Unit,
+    onNavigateToHistory: () -> Unit,
     onNavigateToUserProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,10 +54,10 @@ fun MainScreen(
                     onNavigateToSettings = onNavigateToSettings,
                     onNavigateToStatistics = onNavigateToStatistics,
                     onNavigateToDailyChallenge = onNavigateToDailyChallenge,
-                    onNavigateToRecentQuestions = onNavigateToRecentQuestions,
                     onNavigateToTextImprovement = onNavigateToTextImprovement,
                     onNavigateToRandomFacts = onNavigateToRandomFacts,
                     onNavigateToMetacognition = onNavigateToMetacognition,
+                    onNavigateToHistory = onNavigateToHistory,
                     onNavigateToUserProfile = onNavigateToUserProfile,
                     userProfile = uiState.userProfile,
                     onClose = { 

@@ -25,6 +25,7 @@ import com.example.thinksmarter.data.model.DailyChallenge
 import com.example.thinksmarter.data.model.UserStreak
 import com.example.thinksmarter.data.model.TextImprovement
 import com.example.thinksmarter.data.model.RandomFact
+import com.example.thinksmarter.data.model.MetacognitionResponse
 import com.example.thinksmarter.data.network.Message
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -40,6 +41,7 @@ class ThinkSmarterRepositoryImpl(
     private val categoryDao = database.categoryDao()
     private val dailyChallengeDao = database.dailyChallengeDao()
     private val randomFactDao = database.randomFactDao()
+    private val metacognitionResponseDao = database.metacognitionResponseDao()
 
     // Question operations
     override fun getAllQuestions(): Flow<List<Question>> = questionDao.getAllQuestions()
@@ -542,14 +544,31 @@ class ThinkSmarterRepositoryImpl(
             )
             
             val response = anthropicApi.generateQuestion(apiKey, request = request)
+            val guidance = response.content.first().text
             println("DEBUG: Metacognitive guidance generated successfully")
             
-            Result.success(response.content.first().text)
+            // Save the response to database
+            val metacognitionResponse = MetacognitionResponse(
+                userInput = userInput,
+                guidance = guidance,
+                timestamp = java.time.LocalDateTime.now()
+            )
+            saveMetacognitionResponse(metacognitionResponse)
+            
+            Result.success(guidance)
         } catch (e: Exception) {
             println("DEBUG: Error generating metacognitive guidance: ${e.message}")
             e.printStackTrace()
             Result.failure(e)
         }
+    }
+
+    override suspend fun saveMetacognitionResponse(response: MetacognitionResponse) {
+        metacognitionResponseDao.insertResponse(response)
+    }
+
+    override fun getAllMetacognitionResponses(): Flow<List<MetacognitionResponse>> {
+        return metacognitionResponseDao.getAllResponses()
     }
 
     private object PreferencesKeys {
