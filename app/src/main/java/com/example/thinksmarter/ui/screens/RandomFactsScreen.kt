@@ -28,7 +28,8 @@ import com.example.thinksmarter.ui.viewmodel.RandomFactsUiEvent
 fun RandomFactsScreen(
     uiState: RandomFactsUiState,
     onEvent: (RandomFactsUiEvent) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToPreviousFacts: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -178,58 +179,15 @@ fun RandomFactsScreen(
                 }
             }
             
-            // Previous Facts Section
-            if (uiState.previousFacts.isNotEmpty()) {
-                item {
-                    ModernCard {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text(
-                                "Previous Facts",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                uiState.previousFacts.take(5).forEach { fact ->
-                                    ModernCard(
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.padding(12.dp),
-                                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Text(
-                                                    fact.category,
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
-                                                Text(
-                                                    fact.timestamp.format(java.time.format.DateTimeFormatter.ofPattern("MMM dd, HH:mm")),
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                )
-                                            }
-                                            Text(
-                                                fact.fact,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            // View Previous Facts Button
+            item {
+                ModernButton(
+                    onClick = onNavigateToPreviousFacts,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Info, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("View Previous Facts")
                 }
             }
             

@@ -22,6 +22,7 @@ import com.example.thinksmarter.ui.screens.CategoryManagementScreen
 import com.example.thinksmarter.ui.screens.DailyChallengeScreen
 import com.example.thinksmarter.ui.screens.MainScreen
 import com.example.thinksmarter.ui.screens.QuestionDetailScreen
+import com.example.thinksmarter.ui.screens.PreviousRandomFactsScreen
 import com.example.thinksmarter.ui.screens.RandomFactsScreen
 import com.example.thinksmarter.ui.screens.RecentQuestionsScreen
 import com.example.thinksmarter.ui.screens.SettingsScreen
@@ -33,6 +34,8 @@ import com.example.thinksmarter.ui.viewmodel.CategoryViewModel
 import com.example.thinksmarter.ui.viewmodel.DailyChallengeViewModel
 import com.example.thinksmarter.ui.viewmodel.MainViewModel
 import com.example.thinksmarter.ui.viewmodel.MainUiEvent
+import com.example.thinksmarter.ui.viewmodel.PreviousRandomFactsUiEvent
+import com.example.thinksmarter.ui.viewmodel.PreviousRandomFactsViewModel
 import com.example.thinksmarter.ui.viewmodel.RandomFactsViewModel
 import com.example.thinksmarter.ui.viewmodel.RecentQuestionsViewModel
 import com.example.thinksmarter.ui.viewmodel.SettingsViewModel
@@ -197,6 +200,22 @@ class MainActivity : ComponentActivity() {
                                 RandomFactsScreen(
                                     uiState = uiState,
                                     onEvent = randomFactsViewModel::handleEvent,
+                                    onNavigateBack = { navController.popBackStack() },
+                                    onNavigateToPreviousFacts = { navController.navigate("previous_random_facts") }
+                                )
+                            }
+                            
+                            composable("previous_random_facts") {
+                                val previousRandomFactsViewModel: PreviousRandomFactsViewModel = hiltViewModel()
+                                val uiState by previousRandomFactsViewModel.uiState.collectAsState()
+
+                                PreviousRandomFactsScreen(
+                                    facts = uiState.facts,
+                                    selectedCategory = uiState.selectedCategory,
+                                    availableCategories = uiState.availableCategories,
+                                    onCategorySelected = { category ->
+                                        previousRandomFactsViewModel.handleEvent(PreviousRandomFactsUiEvent.SelectCategory(category))
+                                    },
                                     onNavigateBack = { navController.popBackStack() }
                                 )
                             }

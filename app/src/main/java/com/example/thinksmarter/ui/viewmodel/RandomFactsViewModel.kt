@@ -16,7 +16,6 @@ data class RandomFactsUiState(
     val currentFact: String? = null,
     val selectedCategory: String = "General",
     val availableCategories: List<Category> = emptyList(),
-    val previousFacts: List<RandomFact> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -37,7 +36,6 @@ class RandomFactsViewModel @Inject constructor(
 
     init {
         loadCategories()
-        loadRandomFacts()
     }
 
     fun handleEvent(event: RandomFactsUiEvent) {
@@ -72,8 +70,7 @@ class RandomFactsViewModel @Inject constructor(
                             isLoading = false
                         )
                         
-                        // Reload previous facts
-                        loadRandomFacts()
+
                     },
                     onFailure = { exception ->
                         _uiState.value = _uiState.value.copy(
@@ -96,7 +93,6 @@ class RandomFactsViewModel @Inject constructor(
             selectedCategory = category,
             currentFact = null // Clear current fact when category changes
         )
-        loadRandomFacts()
     }
 
     private fun clearError() {
@@ -117,17 +113,5 @@ class RandomFactsViewModel @Inject constructor(
         }
     }
 
-    private fun loadRandomFacts() {
-        viewModelScope.launch {
-            try {
-                repository.getRandomFactsByCategory(_uiState.value.selectedCategory).collect { facts ->
-                    _uiState.value = _uiState.value.copy(previousFacts = facts)
-                }
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    error = "Failed to load previous facts: ${e.message}"
-                )
-            }
-        }
-    }
+
 }
