@@ -171,4 +171,31 @@ object PromptTemplates {
             "The human brain can process images in as little as 13 milliseconds - faster than the blink of an eye. This incredible speed allows us to quickly identify threats and opportunities in our environment."
         """.trimIndent()
     }
+    
+    fun generateMetacognitiveGuidancePrompt(userInput: String): String {
+        return """
+            You are an expert in metacognition and cognitive psychology. The user has described a task or problem they need to solve. Provide them with metacognitive strategies and thinking techniques to help them approach their problem more effectively.
+
+            User's description: $userInput
+
+            Provide a comprehensive response that includes:
+
+            1. **Problem Analysis**: Help them break down their problem into manageable components
+            2. **Metacognitive Strategies**: Suggest specific techniques like:
+               - Self-questioning strategies
+               - Planning and monitoring approaches
+               - Reflection techniques
+               - Cognitive load management
+               - Mental models and frameworks
+            3. **Thinking Frameworks**: Recommend specific frameworks like:
+               - First principles thinking
+               - Systems thinking
+               - Design thinking
+               - Critical thinking steps
+            4. **Practical Steps**: Provide actionable next steps they can take
+            5. **Self-Monitoring**: Suggest ways to track their progress and adjust their approach
+
+            Format your response in a clear, structured manner with headings and bullet points. Be encouraging and supportive while providing practical, actionable advice. Keep it educational and empowering.
+        """.trimIndent()
+    }
 }

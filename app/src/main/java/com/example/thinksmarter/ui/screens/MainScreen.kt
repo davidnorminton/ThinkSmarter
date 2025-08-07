@@ -38,6 +38,7 @@ fun MainScreen(
     onNavigateToRecentQuestions: () -> Unit,
     onNavigateToTextImprovement: () -> Unit,
     onNavigateToRandomFacts: () -> Unit,
+    onNavigateToMetacognition: () -> Unit,
     onNavigateToUserProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -56,6 +57,7 @@ fun MainScreen(
                     onNavigateToRecentQuestions = onNavigateToRecentQuestions,
                     onNavigateToTextImprovement = onNavigateToTextImprovement,
                     onNavigateToRandomFacts = onNavigateToRandomFacts,
+                    onNavigateToMetacognition = onNavigateToMetacognition,
                     onNavigateToUserProfile = onNavigateToUserProfile,
                     userProfile = uiState.userProfile,
                     onClose = { 

@@ -74,6 +74,9 @@ interface ThinkSmarterRepository {
     suspend fun saveRandomFact(fact: RandomFact)
     fun getRandomFactsByCategory(category: String): Flow<List<RandomFact>>
     fun getAllRandomFacts(): Flow<List<RandomFact>>
+    
+    // Metacognitive guidance
+    suspend fun generateMetacognitiveGuidance(userInput: String): Result<String>
 }
 
 data class AnswerEvaluation(

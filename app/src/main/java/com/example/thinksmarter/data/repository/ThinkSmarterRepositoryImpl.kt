@@ -523,6 +523,35 @@ class ThinkSmarterRepositoryImpl(
         return randomFactDao.getAllFacts()
     }
 
+    override suspend fun generateMetacognitiveGuidance(userInput: String): Result<String> {
+        return try {
+            println("DEBUG: Generating metacognitive guidance for input: $userInput")
+            
+            val apiKey = getApiKey()
+            if (apiKey == null) {
+                return Result.failure(Exception("API key not configured"))
+            }
+            
+            val prompt = PromptTemplates.generateMetacognitiveGuidancePrompt(userInput)
+            println("DEBUG: Using prompt: $prompt")
+            
+            val request = AnthropicRequest(
+                model = "claude-3-7-sonnet-latest",
+                max_tokens = 1000,
+                messages = listOf(Message(role = "user", content = prompt))
+            )
+            
+            val response = anthropicApi.generateQuestion(apiKey, request = request)
+            println("DEBUG: Metacognitive guidance generated successfully")
+            
+            Result.success(response.content.first().text)
+        } catch (e: Exception) {
+            println("DEBUG: Error generating metacognitive guidance: ${e.message}")
+            e.printStackTrace()
+            Result.failure(e)
+        }
+    }
+
     private object PreferencesKeys {
         val API_KEY = stringPreferencesKey("api_key")
         val DIFFICULTY_LEVEL = intPreferencesKey("difficulty_level")

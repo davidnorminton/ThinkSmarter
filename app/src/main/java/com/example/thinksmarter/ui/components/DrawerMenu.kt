@@ -5,6 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -35,6 +36,7 @@ fun DrawerMenu(
     onNavigateToRecentQuestions: () -> Unit,
     onNavigateToTextImprovement: () -> Unit,
     onNavigateToRandomFacts: () -> Unit,
+    onNavigateToMetacognition: () -> Unit,
     onNavigateToUserProfile: () -> Unit,
     onClose: () -> Unit,
     userProfile: UserProfile? = null,
@@ -72,6 +74,14 @@ fun DrawerMenu(
                 onClick = {
                     onClose()
                     onNavigateToRandomFacts()
+                }
+            ),
+            DrawerMenuItem(
+                title = "Metacognition Guide",
+                icon = { Icon(Icons.Default.Info, contentDescription = null) },
+                onClick = {
+                    onClose()
+                    onNavigateToMetacognition()
                 }
             ),
             DrawerMenuItem(

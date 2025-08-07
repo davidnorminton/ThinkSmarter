@@ -22,6 +22,7 @@ import com.example.thinksmarter.ui.screens.CategoryManagementScreen
 import com.example.thinksmarter.ui.screens.DailyChallengeScreen
 import com.example.thinksmarter.ui.screens.MainScreen
 import com.example.thinksmarter.ui.screens.QuestionDetailScreen
+import com.example.thinksmarter.ui.screens.MetacognitionScreen
 import com.example.thinksmarter.ui.screens.PreviousRandomFactsScreen
 import com.example.thinksmarter.ui.screens.RandomFactsScreen
 import com.example.thinksmarter.ui.screens.RecentQuestionsScreen
@@ -35,6 +36,7 @@ import com.example.thinksmarter.ui.viewmodel.DailyChallengeViewModel
 import com.example.thinksmarter.ui.viewmodel.MainViewModel
 import com.example.thinksmarter.ui.viewmodel.MainUiEvent
 import com.example.thinksmarter.ui.viewmodel.PreviousRandomFactsUiEvent
+import com.example.thinksmarter.ui.viewmodel.MetacognitionViewModel
 import com.example.thinksmarter.ui.viewmodel.PreviousRandomFactsViewModel
 import com.example.thinksmarter.ui.viewmodel.RandomFactsViewModel
 import com.example.thinksmarter.ui.viewmodel.RecentQuestionsViewModel
@@ -107,6 +109,7 @@ class MainActivity : ComponentActivity() {
                                     onNavigateToRecentQuestions = { navController.navigate("recent_questions") },
                                     onNavigateToTextImprovement = { navController.navigate("text_improvement") },
                                     onNavigateToRandomFacts = { navController.navigate("random_facts") },
+                                    onNavigateToMetacognition = { navController.navigate("metacognition") },
                                     onNavigateToUserProfile = { navController.navigate("user_profile") }
                                 )
                             }
@@ -216,6 +219,17 @@ class MainActivity : ComponentActivity() {
                                     onCategorySelected = { category ->
                                         previousRandomFactsViewModel.handleEvent(PreviousRandomFactsUiEvent.SelectCategory(category))
                                     },
+                                    onNavigateBack = { navController.popBackStack() }
+                                )
+                            }
+                            
+                            composable("metacognition") {
+                                val metacognitionViewModel: MetacognitionViewModel = hiltViewModel()
+                                val uiState by metacognitionViewModel.uiState.collectAsState()
+
+                                MetacognitionScreen(
+                                    uiState = uiState,
+                                    onEvent = metacognitionViewModel::handleEvent,
                                     onNavigateBack = { navController.popBackStack() }
                                 )
                             }
